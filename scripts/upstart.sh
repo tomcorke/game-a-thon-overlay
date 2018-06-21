@@ -2,5 +2,5 @@
 
 set -e
 
-./update.sh
-./restart.sh
+./scripts/update.sh
+./scripts/restart.sh
