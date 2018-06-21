@@ -1,0 +1,19 @@
+.admin {
+  padding: 2em;
+
+  .donation {
+    margin-bottom: 1em;
+
+    .approveButton, .unapproveButton {
+      margin: 0.5em 0;
+      padding: 0.5em;
+      background: grey;
+      color: white;
+      border: 1px solid black;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+  }
+
+}
