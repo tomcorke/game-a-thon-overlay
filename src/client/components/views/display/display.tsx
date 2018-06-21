@@ -10,14 +10,19 @@ interface ProgressBarProps {
 
 const ProgressBar = ({ progress }: ProgressBarProps) => {
 
-  const minFillWidth = 1.6
-  const maxFillWith = 98.5
-  const width = Math.min(100, minFillWidth + ((maxFillWith - minFillWidth) * (progress / 100)))
+  const minFillWidth = 0.1
+  const maxFillWith = 92
+  const width = Math.min(100, minFillWidth + ((maxFillWith - minFillWidth) * (Math.min(progress, 100) / 100)))
+
+  let extraBarClass = ''
+  if (progress >= 100) {
+    extraBarClass = STYLES.progressBar__full
+  }
 
   return (
     <div className={STYLES.progressBar}>
       <div className={STYLES.progressBar__background} />
-      <div className={STYLES.progressBar__fill} style={{ width: `${width}%` }} />
+      <div className={`${STYLES.progressBar__fill} ${extraBarClass}`} style={{ width: `${width}%` }} />
       <div className={STYLES.progressBar__foreground} />
     </div>
   )
@@ -117,13 +122,18 @@ const DisplayView = ({ info, approvedDonations, displayPhases }: DisplayViewProp
         {topDonationDisplay}
       </div>
 
-      <div className={STYLES.borderOverlay} />
+      {/*<div className={STYLES.borderOverlay} />*/}
 
       {info ?
         <div className={STYLES.infoDisplay}>
-          <div className={STYLES.infoDisplay__title}>{info.title}</div>
-          <div className={STYLES.infoDisplay__raised}>
-            <span>Raised £{info.grandTotalRaisedExcludingGiftAid} of target £{info.fundraisingTarget}</span>
+          <div className={STYLES.infoDisplay__inner}>
+            <div className={STYLES.infoDisplay__title}>{info.eventName}</div>
+            <div className={STYLES.infoDisplay__raised}>
+              <span>Raised £{info.grandTotalRaisedExcludingGiftAid} of target £{info.fundraisingTarget}</span>
+            </div>
+            <div className={STYLES.infoDisplay__target}>
+              <span>£{info.fundraisingTarget}</span>
+            </div>
           </div>
         </div> :
         null

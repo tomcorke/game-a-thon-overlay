@@ -1,17 +1,55 @@
 .admin {
+  font-size: 16px;
   padding: 2em;
 
   .donation {
-    margin-bottom: 1em;
+    border-bottom: 1px solid grey;
+    margin: 0.1em 0;
 
-    .approveButton, .unapproveButton {
-      margin: 0.5em 0;
-      padding: 0.5em;
-      background: grey;
-      color: white;
-      border: 1px solid black;
-      cursor: pointer;
-      display: inline-block;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: flex-start;
+
+    .approveDisplay {
+      width: 100px;
+
+      .approveButton, .unapproveButton {
+        margin: 0.5em 0;
+        padding: 0.5em;
+        background: grey;
+        color: white;
+        border: 1px solid black;
+        cursor: pointer;
+        display: inline-block;
+      }
+
+      .approveButton {
+        background: darkgreen;
+      }
+
+      .unapproveButton {
+        background: darkred;
+      }
+    }
+
+    .date, .amount, .name, .message {
+      margin-left: 1em;
+      min-width: 150px;
+    }
+
+    .date {
+      opacity: 0.7;
+      width: 150px;
+    }
+
+    .name {
+      font-weight: bold;
+      min-width: 200px;
+    }
+
+    .message {
+      width: auto;
     }
 
   }

@@ -1,55 +1,12 @@
 @import './phased';
 
-$gameAThonDark: #252031;
-$gameAThonLight: #29efd1;
+$gatDark: #252031;
+$gatLight: #00efd1;
+$gatPink: #921eff;
 
 .display {
   width: 100%;
   height: 100%;
-}
-
-.progressDisplay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100px;
-
-  .progressBar {
-    width: 100%;
-    height: 100px;
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    &__background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('../../../images/progress-bg.png') top left no-repeat;
-    }
-
-    &__fill {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('../../../images/progress-fill.png') top left no-repeat;
-      transition: width 1s ease-out;
-    }
-
-    &__foreground {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('../../../images/progress-border.png') top left no-repeat;
-    }
-  }
 }
 
 %fullDisplay {
@@ -60,11 +17,72 @@ $gameAThonLight: #29efd1;
   height: 100%;
 }
 
+.progressDisplay {
+  @extend %fullDisplay;
+
+  display: flex;
+  justify-content: center;
+
+  .progressBar {
+    margin-top: 5px;
+    position: relative;
+    width: 100%;
+    max-width: 1920px;
+    height: 50px;
+
+    &__background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background: url('../../../images/gat_bar_bg.png') top left no-repeat;
+    }
+
+    &__fill {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 100%;
+      height: 46px;
+      background: $gatPink;
+      border-right: 5px solid #00efd1;
+      transition: width 1s ease-out;
+    }
+
+    &__full {
+      animation: flashProgressBar 3s ease-in-out infinite;
+
+      @keyframes flashProgressBar {
+        0% {
+          background: $gatPink;
+        }
+        50% {
+          background: lighten($gatPink, 10%);
+        }
+        100% {
+          background: $gatPink;
+        }
+      }
+    }
+
+    &__foreground {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      margin-left: 20px;
+      background: url('../../../images/gat_bar_logo.png') left center no-repeat;
+    }
+  }
+}
+
 .borderOverlay {
   @extend %fullDisplay;
 
-  border: 5px solid $gameAThonDark;
-  border-top: 5px solid $gameAThonLight
+  border: 5px solid gatDark;
+  border-top: 5px solid gatLight
 }
 
 .phasedDisplay {
@@ -76,8 +94,8 @@ $gameAThonLight: #29efd1;
   justify-content: flex-end;
 
   .donationDisplay {
-    background: rgba(#252031, 0.6);
-    background: linear-gradient(to left, $gameAThonLight 0, $gameAThonLight 5px, rgba($gameAThonDark, 0.8) 5px);
+    background: $gatPink;
+    background: linear-gradient(to left, $gatLight 0, $gatLight 5px, rgba($gatPink, 0.8) 5px);
     color: white;
     padding: 0.5em 2em 0.5em 0.5em;
     max-width: 25%;
@@ -93,42 +111,51 @@ $gameAThonLight: #29efd1;
 .infoDisplay {
   @extend %fullDisplay;
 
+  display: flex;
+  justify-content: center;
+
+  &__inner {
+    width: 100%;
+    max-width: 1920px;
+    position: relative;
+  }
+
   &__title {
     position: absolute;
-    left: 10px;
-    top: 10px;
+    left: 5px;
+    top: 60px;
     color: white;
     font-size: 32px;
-    background: rgba($gameAThonDark, 0.3);
-    padding: 0.1em;
+    background: rgba($gatDark, 0.3);
+    padding: 0.2em 0.5em;
   }
 
   &__raised {
     position: absolute;
     left: 0;
-    top: 80px;
+    top: 19px;
     width: 100%;
     text-align: center;
 
     span {
       color: white;
       font-size: 24px;
-      background: rgba($gameAThonDark, 0.3);
-      padding: 0.1em;
+      background: rgba($gatDark, 0.3);
+      padding: 0.12em 0.5em;
     }
   }
 
   &__target {
     position: absolute;
-    right: 30px;
-    top: 80px;
+    right: 0;
+    top: 5px;
+    height: 50px;
+    width: 120px;
     color: white;
-    font-size: 24px;
-    background: rgba($gameAThonDark, 0.3);
+    font-size: 32px;
     padding: 0.1em;
-
-    &::before {
-      content: 'Fundraising target: £'
-    }
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
   }
 }

@@ -41,21 +41,33 @@ const getAllDonations = async (): Promise<MergedDonationsEndpointResult> => {
   const firstPageEndpoint = `${endpoints.donations}?pageSize=${PAGE_SIZE}`
   const firstPage = await getEndpoint(firstPageEndpoint) as DonationsEndpointResult
   const pagination = firstPage.pagination
+
   if (pagination.totalPages === 1) {
     return firstPage
   }
+
   const pageFetchers: Promise<DonationsEndpointResult>[] = []
   for (let i = 2; i <= pagination.totalPages; i += 1) {
     const pageEndpoint = `${endpoints.donations}?pageNum=${i}&pageSize=${PAGE_SIZE}`
     pageFetchers.push(getEndpoint(pageEndpoint))
   }
-  const pageResults = await BluebirdPromise.map(pageFetchers, i => i, { concurrency: 5 })
+
+  const pageResults = await BluebirdPromise
+    .map(
+      pageFetchers,
+      data => {
+        console.log(`Fetched page ${data.pagination.pageNumber} of ${data.pagination.totalPages}`)
+        return data
+      },
+      { concurrency: 5 })
+
   const mergedResults: MergedDonationsEndpointResult = pageResults.reduce((allResults, page) => {
     return {
       ...allResults,
       donations: allResults.donations.concat(page.donations)
     }
   }, firstPage)
+
   return mergedResults
 }
 
@@ -86,7 +98,7 @@ const getData = async (): Promise<EndpointDataMap> => {
       dataCachePromise = newDataFetcher
 
       dataRefreshThrottled = true
-      window.setTimeout(() => {
+      setTimeout(() => {
         dataRefreshThrottled = false
       }, DATA_REFRESH_THROTTLE_TIME)
     }

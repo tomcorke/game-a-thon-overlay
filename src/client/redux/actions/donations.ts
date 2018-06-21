@@ -1,12 +1,15 @@
 import { action } from 'typesafe-actions'
 
 import { APIDonationData, APIDonationStreamDataPayload } from '../../../types/api'
+import { ApplicationState } from '../reducers'
 
 import config from '../../config'
 
 export const HANDLE_DONATION_STREAM_DATA = 'HANDLE_DONATION_STREAM_DATA'
 export const APPROVE_DONATION = 'APPROVE_DONATION'
 export const UNAPPROVE_DONATION = 'UNAPPROVE_DONATION'
+export const SET_ADMIN_SHOW_APPROVED_DONATIONS = 'SET_ADMIN_SHOW_APPROVED_DONATIONS'
+export const SET_ADMIN_SHOW_UNAPPROVED_DONATIONS = 'SET_ADMIN_SHOW_UNAPPROVED_DONATIONS'
 
 const APPROVE_DONATION_ENDPOINT = config.approveDonationEndpoint
 const UNAPPROVE_DONATION_ENDPOINT = config.unapproveDonationEndpoint
@@ -76,6 +79,32 @@ export const initDonationStreamDataRefresh = () => {
   }
 }
 
+const _setAdminShowApprovedDonations = (newValue: boolean) => action(
+  SET_ADMIN_SHOW_APPROVED_DONATIONS,
+  newValue
+)
+
+const _setAdminShowUnapprovedDonations = (newValue: boolean) => action(
+  SET_ADMIN_SHOW_UNAPPROVED_DONATIONS,
+  newValue
+)
+
+export const toggleAdminShowApprovedDonations = () => {
+  return (dispatch, getState: () => ApplicationState) => {
+    const currentValue = getState().donations.adminOptions.showApprovedDonations
+    dispatch(_setAdminShowApprovedDonations(!currentValue))
+  }
+}
+
+export const toggleAdminShowUnapprovedDonations = () => {
+  return (dispatch, getState: () => ApplicationState) => {
+    const currentValue = getState().donations.adminOptions.showUnapprovedDonations
+    dispatch(_setAdminShowUnapprovedDonations(!currentValue))
+  }
+}
+
 export type DonationsActions = ReturnType<
   | typeof _handleDonationStreamData
+  | typeof _setAdminShowApprovedDonations
+  | typeof _setAdminShowUnapprovedDonations
 >
