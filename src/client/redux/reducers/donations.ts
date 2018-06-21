@@ -1,19 +1,20 @@
 import { Reducer } from 'redux'
-import { APIDonationData } from '../../../types/api'
+import { APIDonationDataWithExtraData, APIFundraiserInfo, APIDonationStreamDataPayload } from '../../../types/api'
 import { DonationsActions, HANDLE_DONATION_STREAM_DATA } from '../actions/donations'
 
 export interface DonationsState {
-  donations: APIDonationData[]
+  info?: APIFundraiserInfo
+  donations: APIDonationDataWithExtraData[]
 }
 
 const initialState: DonationsState = {
   donations: []
 }
 
-const handledonationStreamData = (state: DonationsState, data: APIDonationData[]) => {
+const handledonationStreamData = (state: DonationsState, data: APIDonationStreamDataPayload) => {
   return {
     ...state,
-    donations: data
+    ...data
   }
 }
 

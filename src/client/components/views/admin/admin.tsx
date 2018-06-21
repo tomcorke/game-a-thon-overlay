@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { APIDonationData } from '../../../../types/api'
+import { APIDonationDataWithExtraData } from '../../../../types/api'
 
 import * as STYLES from './admin.scss'
 
 interface DonationProps {
-  donation: APIDonationData
+  donation: APIDonationDataWithExtraData
   onApprove: () => any
   onUnapprove: () => any
 }
@@ -23,8 +23,8 @@ const Donation = ({ donation, onApprove, onUnapprove }: DonationProps) => {
   return (
     <div className={STYLES.donation}>
       <div className={STYLES.date}>{new Date(donation.timestamp).toString()}</div>
-      <div className={STYLES.amount}>{donation.amount} {donation.currency}</div>
-      <div className={STYLES.donator}>{donation.name}</div>
+      <div className={STYLES.amount}>{donation.amount} {donation.currencyCode}</div>
+      <div className={STYLES.name}>{donation.donorDisplayName}</div>
       <div className={STYLES.message}>{donation.message}</div>
       {approveDisplay}
     </div>
@@ -32,7 +32,7 @@ const Donation = ({ donation, onApprove, onUnapprove }: DonationProps) => {
 }
 
 interface AdminViewProps {
-  donations: APIDonationData[]
+  donations: APIDonationDataWithExtraData[]
   approveDonation: (hash: string) => any
   unapproveDonation: (hash: string) => any
 }

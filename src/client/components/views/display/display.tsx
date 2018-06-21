@@ -1,10 +1,30 @@
 import * as React from 'react'
+import { APIDonationDataWithExtraData, APIFundraiserInfo } from '../../../../types/api'
+import { DisplayPhase } from '../../../types'
 
 import * as STYLES from './display.scss'
-import { APIDonationData } from '../../../../types/api'
+
+interface ProgressBarProps {
+  progress: number
+}
+
+const ProgressBar = ({ progress }: ProgressBarProps) => {
+
+  const minFillWidth = 1.6
+  const maxFillWith = 98.5
+  const width = Math.min(100, minFillWidth + ((maxFillWith - minFillWidth) * (progress / 100)))
+
+  return (
+    <div className={STYLES.progressBar}>
+      <div className={STYLES.progressBar__background} />
+      <div className={STYLES.progressBar__fill} style={{ width: `${width}%` }} />
+      <div className={STYLES.progressBar__foreground} />
+    </div>
+  )
+}
 
 interface DonationProps {
-  donation: APIDonationData
+  donation: APIDonationDataWithExtraData
 }
 
 const getCurrencySymbol = (code: string): string => {
@@ -20,7 +40,6 @@ const format = (value: number, maxDecimals: number = 0, minDecimals: number = 0)
   const mul = Math.pow(10, maxDecimals)
   let s = String(Math.floor(value * mul) / mul)
   const decimalIndex = s.indexOf('.')
-  console.log(s, decimalIndex)
   if (decimalIndex === 0) {
     s = `${s}.${'0'.repeat(minDecimals)}`
   } else {
@@ -29,40 +48,87 @@ const format = (value: number, maxDecimals: number = 0, minDecimals: number = 0)
     if (missingDecimals > 0) {
       s = `${s}${'0'.repeat(missingDecimals)}`
     }
-    console.log(s, numDecimals, missingDecimals)
   }
   return s
 }
 
 const Donation = ({ donation }: DonationProps) => {
+  const amount = donation.amount === null ? 0 : +donation.amount
   return (
     <div className={STYLES.donation}>
-      <div className={STYLES.amount}>{getCurrencySymbol(donation.currency)}{format(donation.amount, 2, 2)}</div>
-      <div className={STYLES.donator}>{donation.name}</div>
+      <div className={STYLES.amount}>{getCurrencySymbol(donation.currencyCode)}{format(amount, 2, 2)}</div>
+      <div className={STYLES.name}>{donation.donorDisplayName}</div>
       <div className={STYLES.message}>{donation.message}</div>
     </div>
   )
 }
 
 interface DisplayViewProps {
-  approvedDonations: APIDonationData[]
+  info?: APIFundraiserInfo,
+  approvedDonations: APIDonationDataWithExtraData[],
+  displayPhases: { [displayPhase: string]: DisplayPhase }
 }
 
-const DisplayView = ({ approvedDonations }: DisplayViewProps) => {
+const DisplayView = ({ info, approvedDonations, displayPhases }: DisplayViewProps) => {
 
-  const latestDonation = approvedDonations
-    .sort((a, b) => b.timestamp - a.timestamp)[0]
+  const getLastDonation = () => {
+    const lastDonation = approvedDonations
+      .filter(d => d.amount !== null)
+      .sort((a, b) => b.timestamp - a.timestamp)[0]
 
-  console.log(latestDonation)
+    const lastDonationDisplayPhase: DisplayPhase = displayPhases['lastDonation'] || 'hide'
+
+    return lastDonation ?
+      <div className={`${STYLES.donationDisplay} ${lastDonationDisplayPhase}`}>
+        Latest donation:
+        <Donation donation={lastDonation} />
+      </div> :
+      null
+  }
+
+  const getTopDonation = () => {
+    const topDonation = approvedDonations
+      .filter(d => d.amount !== null)
+      .sort((a, b) => (b.amount === null ? 0 : +b.amount) - (a.amount === null ? 0 : +a.amount))[0]
+
+    const topDonationDisplayPhase: DisplayPhase = displayPhases['topDonation'] || 'hide'
+
+    return topDonation ?
+    <div className={`${STYLES.donationDisplay} ${topDonationDisplayPhase}`}>
+      Top donation:
+      <Donation donation={topDonation} />
+    </div> :
+    null
+  }
+
+  const lastDonationDisplay = getLastDonation()
+
+  const topDonationDisplay = getTopDonation()
 
   return (
     <div className={STYLES.display}>
-      {latestDonation && (
-        <div className={STYLES.lastDonation}>
-          Latest donation:
-          <Donation donation={latestDonation} />
-        </div>
-      )}
+
+      <div className={STYLES.progressDisplay}>
+        <ProgressBar progress={info ? +info.totalRaisedPercentageOfFundraisingTarget : 0} />
+      </div>
+
+      <div className={STYLES.phasedDisplay}>
+        {lastDonationDisplay}
+        {topDonationDisplay}
+      </div>
+
+      <div className={STYLES.borderOverlay} />
+
+      {info ?
+        <div className={STYLES.infoDisplay}>
+          <div className={STYLES.infoDisplay__title}>{info.title}</div>
+          <div className={STYLES.infoDisplay__raised}>
+            <span>Raised £{info.grandTotalRaisedExcludingGiftAid} of target £{info.fundraisingTarget}</span>
+          </div>
+        </div> :
+        null
+      }
+
     </div>
   )
 }

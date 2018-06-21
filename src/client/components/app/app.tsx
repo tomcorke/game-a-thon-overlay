@@ -16,6 +16,7 @@ const viewComponents: { [view: string]: () => JSX.Element } = {
 interface AppProps {
   view: View
   initDonationRefresh: () => any
+  initDisplayPhaser: () => any
 }
 
 class App extends React.Component<AppProps> {
@@ -26,6 +27,7 @@ class App extends React.Component<AppProps> {
 
   componentDidMount () {
     this.props.initDonationRefresh && this.props.initDonationRefresh()
+    this.props.initDisplayPhaser && this.props.initDisplayPhaser()
   }
 
   render () {

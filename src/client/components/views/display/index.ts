@@ -6,7 +6,9 @@ import DisplayView from './display'
 
 const ConnectedDisplayView = connect(
   (state: ApplicationState) => ({
-    approvedDonations: state.donations.donations.filter(d => d.approved)
+    info: state.donations.info,
+    approvedDonations: state.donations.donations.filter(d => d.approved),
+    displayPhases: state.displayPhaser.displayPhases
   })
 )(DisplayView)
 

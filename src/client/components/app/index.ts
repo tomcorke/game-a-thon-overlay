@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { initDonationStreamDataRefresh } from '../../redux/actions/donations'
+import { initDisplayPhaser } from '../../redux/actions/display-phaser'
 import { ApplicationState, Dispatch } from '../../redux/reducers'
 
 import App from './app'
@@ -9,7 +10,8 @@ const ConnectedApp = connect(
     view: state.view.view
   }),
   (dispatch: Dispatch) => ({
-    initDonationRefresh: dispatch(initDonationStreamDataRefresh())
+    initDonationRefresh: dispatch(initDonationStreamDataRefresh()),
+    initDisplayPhaser: dispatch(initDisplayPhaser())
   })
 )(App)
 

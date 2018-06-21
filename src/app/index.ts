@@ -7,7 +7,7 @@ import * as cookieParser from 'cookie-parser'
 
 import { getData } from './data'
 
-import { APIDonationData } from '../types/api'
+import { APIDonationData, APIDonationStreamDataPayload, APIDonationDataWithExtraData } from '../types/api'
 
 import { DB } from './db'
 
@@ -54,14 +54,12 @@ const parseTime = (stringValue: string) => {
 app.get('/donation-stream-data', async (req, res) => {
   const data = await getData()
 
-  const donations: APIDonationData[] = data.donations.donations
-    .map((d: any): APIDonationData => {
+  const donations: APIDonationDataWithExtraData[] = data.donations.donations
+    .map((d: APIDonationData): APIDonationDataWithExtraData => {
 
-      const donation: APIDonationData = {
-        name: d.donorDisplayName,
-        message: d.message,
-        amount: d.amount,
-        currency: d.currencyCode,
+      const donation: APIDonationDataWithExtraData = {
+        ...d,
+
         timestamp: parseTime(d.donationDate),
         hash: '',
         approved: false
@@ -73,7 +71,12 @@ app.get('/donation-stream-data', async (req, res) => {
       return donation
     })
 
-  res.json(donations)
+  const payload: APIDonationStreamDataPayload = {
+    info: data.info,
+    donations
+  }
+
+  res.json(payload)
 })
 
 app.post('/approve-donation', async (req, res) => {

@@ -1,16 +1,18 @@
 import { action } from 'typesafe-actions'
 
-import { APIDonationData } from '../../../types/api'
+import { APIDonationData, APIDonationStreamDataPayload } from '../../../types/api'
+
+import config from '../../config'
 
 export const HANDLE_DONATION_STREAM_DATA = 'HANDLE_DONATION_STREAM_DATA'
 export const APPROVE_DONATION = 'APPROVE_DONATION'
 export const UNAPPROVE_DONATION = 'UNAPPROVE_DONATION'
 
-const APPROVE_DONATION_ENDPOINT = '/approve-donation'
-const UNAPPROVE_DONATION_ENDPOINT = '/unapprove-donation'
-const DONATION_STREAM_DATA_ENDPOINT = '/donation-stream-data'
+const APPROVE_DONATION_ENDPOINT = config.approveDonationEndpoint
+const UNAPPROVE_DONATION_ENDPOINT = config.unapproveDonationEndpoint
+const DONATION_STREAM_DATA_ENDPOINT = config.donationStreamDataEndpoint
 
-const _handleDonationStreamData = (data: APIDonationData[]) => action(
+const _handleDonationStreamData = (data: APIDonationStreamDataPayload) => action(
   HANDLE_DONATION_STREAM_DATA,
   data
 )
@@ -20,7 +22,7 @@ export const getDonationStreamData = () => {
     console.log('fetching donation stream data')
     fetch(DONATION_STREAM_DATA_ENDPOINT)
       .then(response => response.json())
-      .then(data => dispatch(_handleDonationStreamData(data)))
+      .then(data => dispatch(_handleDonationStreamData(data as APIDonationStreamDataPayload)))
       .catch(err => console.error(err))
   }
 }
@@ -56,6 +58,7 @@ let donationRefreshTimeout: number | undefined
 const DONATION_REFRESH_INTERVAL = 30000
 
 export const initDonationStreamDataRefresh = () => {
+  console.log('initDonationsStreamDataRefresh')
   return (dispatch) => {
     const update = async () => dispatch(getDonationStreamData())
 

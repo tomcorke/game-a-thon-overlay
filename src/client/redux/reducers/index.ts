@@ -1,17 +1,21 @@
 import { combineReducers, Reducer } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { ApplicationAction } from '../actions'
-import viewReducer, { ViewState } from '../reducers/view'
+
+import displayPhaserReducer, { DisplayPhaserState } from './display-phaser'
 import donationsReducer, { DonationsState } from './donations'
+import viewReducer, { ViewState } from '../reducers/view'
 
 export interface ApplicationState {
-  view: ViewState
+  displayPhaser: DisplayPhaserState
   donations: DonationsState
+  view: ViewState
 }
 
 const rootReducer: Reducer<ApplicationState> = combineReducers<ApplicationState>({
-  view: viewReducer,
-  donations: donationsReducer
+  displayPhaser: displayPhaserReducer,
+  donations: donationsReducer,
+  view: viewReducer
 })
 
 export type Dispatch = ThunkDispatch<ApplicationState, null, ApplicationAction>
